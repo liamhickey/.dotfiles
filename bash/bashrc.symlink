@@ -20,9 +20,8 @@ export BASH=$HOME/dotfiles
 export PROJECTS=~/git
 
 # all of my bash files
-shopt -s globstar
 typeset config_files
-config_files=($BASH/**/*.bash)
+config_files=$(find $BASH -name "*.bash")
 
 # load everything
 for file in ${config_files}
@@ -86,7 +85,7 @@ fi
 
 #============================================================
 #
-#  FUNCTIONS
+#  ALIASES
 #
 #============================================================
 
@@ -110,6 +109,12 @@ export LESS_TERMCAP_se=$'\E[0m'
 export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
+
+#============================================================
+#
+#  FUNCTIONS
+#
+#============================================================
 
 #-------------------------------------------------------------
 # File & strings related functions:
