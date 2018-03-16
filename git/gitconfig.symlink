@@ -28,6 +28,6 @@
 [core]
         editor = vim
 [push]
-        default = simple
+        default = current
 [pull]
         rebase = true
