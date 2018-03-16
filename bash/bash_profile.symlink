@@ -48,5 +48,6 @@ NC='\[\e[m\]'
 
 PS1="\`if [[ \$EUID -eq 0 ]]; then PCT='$RED';
 else PCT='$BLU'; fi;
-echo '\n$GRN[\w] $GRY('\$PCT'\t$GRY)-('\$PCT'\u$GRY)-('\$PCT'\!$GRY)\n$YEL-> $NC'\`"
+echo '\n$GRN[\w] $GRY('\$PCT'\t$GRY)-('\$PCT'\u$GRY)-('\$PCT'\!$GRY)\n$YEL->$NC '\`"
 
+PS2="$YEL>>$NC "
