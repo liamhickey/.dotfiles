@@ -14,7 +14,7 @@
 [ -z "$PS1" ] && return
 
 # shortcut to this dotfiles path is $BASH
-export BASH=$HOME/dotfiles
+export BASH=$HOME/.dotfiles
 
 # project folder that I can `c [tab]` to
 export PROJECTS=~/git
@@ -69,6 +69,7 @@ if [ "$?" == 2 ]; then
 
     ssh-add -l &>/dev/null
     if [ "$?" == 2 ]; then
+        yes | rm ~/.ssh-agent >/dev/null
         # Start agent and store agent connection info.
         (umask 066; ssh-agent > ~/.ssh-agent)
         eval "$(<~/.ssh-agent)" >/dev/null
@@ -98,7 +99,7 @@ export PAGER=less
 export LESSCHARSET='latin1'
 export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'
                 # Use this if lesspipe.sh exists.
-export LESS='-i -N -w  -z-4 -g -e -M -X -F -R -P%t?f%f \
+export LESS='-i -N -w  -z-4 -g -M -X -F -R -P%t?f%f \
 :stdin .?pb%pb\%:?lbLine %lb:?bbByte %bb:-...'
 
 # LESS man page colors (makes Man pages more readable).
