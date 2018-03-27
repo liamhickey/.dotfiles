@@ -4,9 +4,12 @@
 #
 set -e
 
-# use -iru to search directories ack usually ignores (like .git)
-if [ -x /usr/bin/ack-grep ]; then
-    ack-grep -i $1
-else
+# use -a to search directories ag usually ignores (like .git)
+# use -i to ignore case
+if [ -x /usr/bin/ag ]; then
+    ag -ia "$1"
+elif [ -x /usr/bin/ack ]; then
     ack -i $1
+else
+    grep -isrnw '.' -e "$1"
 fi
