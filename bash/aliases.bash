@@ -2,22 +2,13 @@
 # Personnal Aliases
 #-------------------
 
-alias cp='cp -i'
-alias mv='mv -i'
-# -> Prevents accidentally clobbering files.
-alias mkdir='mkdir -p'
-
-alias h='history'
-alias j='jobs -l'
-alias which='type -a'
-alias ..='cd ..'
-
 # Pretty-print of some PATH variables:
 alias path='echo -e ${PATH//:/\\n}'
-alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
-alias du='du -kh'    # Makes a more readable output.
-alias df='df -kTh'
+alias debug="set -o nounset; set -o xtrace"
+
+# Pipe my public key to my clipboard.
+alias pubkey="more ~/.ssh/id_rsa.pub | clip.exe | echo '=> Public key copied to pasteboard.'"
 
 #-------------------------------------------------------------
 # The 'ls' family (this assumes you use a recent GNU ls).
@@ -36,5 +27,4 @@ alias ll="ls -lv --group-directories-first"
 alias lm='ll |more'        #  Pipe through 'more'
 alias lr='ll -R'           #  Recursive ls.
 alias la='ll -A'           #  Show hidden files.
-alias tree='tree -Csuh'    #  Nice alternative to 'recursive ls' ...
 

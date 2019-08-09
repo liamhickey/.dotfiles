@@ -18,8 +18,8 @@
         dc      = diff --cached
         dw      = diff --ignore-space-at-eol -b -w --ignore-blank-lines
         dcw     = diff --cached --ignore-space-at-eol -b -w --ignore-blank-lines
-        f       = fetch
-        fo      = fetch origin
+        f       = fetch --all
+        fo      = fetch origin --all
         com     = checkout master
         pom     = pull origin master
         st      = status -sb
@@ -45,11 +45,10 @@
         ui      = true
 [core]
         editor  = vim
-        autocrlf= true
+        autocrlf= input
 [push]
         default = current
 [pull]
         rebase = true
 [merge]
-	tool    = vimdiff
-	ff      = false
+		ff      = false

@@ -3,55 +3,31 @@
 #  PERSONAL $HOME/.bashrc FILE for bash-3.0 (or later)
 #  By Liam Hickey <liamhickey@cmail.carleton.ca>
 #
-#  Last modified: 10 May 2018
-
-#  See:
-#  http://tldp.org/LDP/abs/html/index.html
+#  Last modified: August 8, 2019
 #
 # =============================================================== #
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# shortcut to this dotfiles path is $BASH
-export BASH=$HOME/.dotfiles
-
 # project folder that I can `c [tab]` to
-export PROJECTS=/mnt/c/Users/liamhickey/git
-
-# all of my bash files
-typeset config_files
-config_files=$(find $BASH -name "*.bash")
-
-# load everything
-for file in ${config_files}
-do
-  source $file
-done
+export PROJECTS=/mnt/c/Users/liamhickey/git/godevice
 
 #-------------------------------------------------------------
 # Settings
 #-------------------------------------------------------------
 
-#set -o nounset     # These  two options are useful for debugging.
-#set -o xtrace
-alias debug="set -o nounset; set -o xtrace"
-
-ulimit -S -c 0      # Don't want coredumps.
-set -o notify
-set -o noclobber
+# Don't close terminal when EOF is read
 set -o ignoreeof
 
-# Enable options:
+# Enable shell options:
 shopt -s cdspell
 shopt -s cdable_vars
 shopt -s checkhash
 shopt -s checkwinsize
-shopt -s sourcepath
 shopt -s no_empty_cmd_completion
-shopt -s cmdhist
 shopt -s histappend histreedit histverify
-shopt -s extglob       # Necessary for programmable completion.
+shopt -s extglob	   # Necessary for programmable completion.
 shopt -s globstar
 
 #-------------------------------------------------------------
@@ -61,27 +37,27 @@ shopt -s globstar
 # Ensure agent is running
 ssh-add -l &>/dev/null
 if [ "$?" == 2 ]; then
-    # Could not open a connection to your authentication agent.
+	# Could not open a connection to your authentication agent.
 
-    # Load stored agent connection info.
-    test -r ~/.ssh-agent && \
-        eval "$(<~/.ssh-agent)" >/dev/null
+	# Load stored agent connection info.
+	test -r ~/.ssh-agent && \
+		eval "$(<~/.ssh-agent)" >/dev/null
 
-    ssh-add -l &>/dev/null
-    if [ "$?" == 2 ]; then
-        rm ~/.ssh-agent
-        # Start agent and store agent connection info.
-        (umask 066; ssh-agent > ~/.ssh-agent)
-        eval "$(<~/.ssh-agent)" >/dev/null
-    fi
+	ssh-add -l &>/dev/null
+	if [ "$?" == 2 ]; then
+		rm ~/.ssh-agent
+		# Start agent and store agent connection info.
+		(umask 066; ssh-agent > ~/.ssh-agent)
+		eval "$(<~/.ssh-agent)" >/dev/null
+	fi
 fi
 
 # Load identities
 ssh-add -l &>/dev/null
 if [ "$?" == 1 ]; then
-    # The agent has no identities.
-    # Time to add one.
-    ssh-add -t 4h
+	# The agent has no identities.
+	# Time to add one.
+	ssh-add -t 4h
 fi
 
 #-------------------------------------------------------------
@@ -116,80 +92,47 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 # Find a file with a pattern in name:
 function ff() { find . -type f -iname '*'"$*"'*' -ls ; }
 
-# Creates an archive (*.tar.gz) from given directory.
-function maketar() { tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"; }
-
-# Create a ZIP archive of a file or folder.
-function makezip() { zip -r "${1%%/}.zip" "$1" ; }
-
-# Make your directories and files access rights sane.
-function sanitize() { chmod -R u=rwX,g=rX,o= "$@" ;}
-
-#-------------------------------------------------------------
-# Process/system related functions:
-#-------------------------------------------------------------
-
-function my_ps() { ps $@ -u $USER -o pid,%cpu,%mem,bsdtime,command ; }
-
-function pp() { my_ps f | awk '!/awk/ && $0~var' var=${1:-".*"} ; }
-
-function mydf()         # Pretty-print of 'df' output.
-{                       # Inspired by 'dfc' utility.
-    for fs ; do
-
-        if [ ! -d $fs ]
-        then
-          echo -e $fs" :No such file or directory" ; continue
-        fi
-
-        local info=( $(command df -P $fs | awk 'END{ print $2,$3,$5 }') )
-        local free=( $(command df -Pkh $fs | awk 'END{ print $4 }') )
-        local nbstars=$(( 20 * ${info[1]} / ${info[0]} ))
-        local out="["
-        for ((j=0;j<20;j++)); do
-            if [ ${j} -lt ${nbstars} ]; then
-               out=$out"*"
-            else
-               out=$out"-"
-            fi
-        done
-        out=${info[2]}" "$out"] ("$free" free on "$fs")"
-        echo -e $out
-    done
+# Usage: search <string>
+# Description: Quick search in a directory for a string ($1).
+#
+# credit: https://github.com/holman/dotfiles
+function search()
+{
+	set -e
+	# use -a to search directories ag usually ignores (like .git)
+	# use -i to ignore case
+	if [ -x /usr/bin/ag ]; then
+		ag -ia "$1"
+	elif [ -x /usr/bin/ack ]; then
+		ack -i $1
+	else
+		grep -isrnw '.' -e "$1"
+	fi
 }
 
-function my_ip() # Get IP adress on ethernet.
+# Usage: extract <file>
+# Description: extracts archived files / mounts disk images
+#
+# credit: http://nparikh.org/notes/zshrc.txt
+function extract () 
 {
-    MY_IP=$(/sbin/ifconfig eth0 | awk '/inet/ { print $2 } ' |
-      sed -e s/addr://)
-    echo ${MY_IP:-"Not connected"}
-}
-
-function ii()   # Get current host related info.
-{
-    echo -e "\nYou are logged on ${BRed}$HOST"
-    echo -e "\n${BRed}Additionnal information:$NC " ; uname -a
-    echo -e "\n${BRed}Users logged on:$NC " ; w -hs |
-             cut -d " " -f1 | sort | uniq
-    echo -e "\n${BRed}Current date :$NC " ; date
-    echo -e "\n${BRed}Machine stats :$NC " ; uptime
-    echo -e "\n${BRed}Memory stats :$NC " ; free
-    echo -e "\n${BRed}Diskspace :$NC " ; mydf / $HOME
-    echo -e "\n${BRed}Local IP Address :$NC" ; my_ip
-    echo -e "\n${BRed}Open connections :$NC "; netstat -pan --inet;
-    echo
-}
-
-#-------------------------------------------------------------
-# Misc utilities:
-#-------------------------------------------------------------
-
-function repeat()       # Repeat n times command.
-{
-    local i max
-    max=$1; shift;
-    for ((i=1; i <= max ; i++)); do  # --> C-like syntax
-        eval "$@";
-    done
+	if [ -f $1 ]; then
+		case $1 in
+			*.tar.bz2) tar -jxvf $1   ;;
+			*.tar.gz)  tar -zxvf $1   ;;
+			*.bz2)     bunzip2 $1     ;;
+			*.gz)      gunzip $1      ;;
+			*.tar)     tar -xvf $1    ;;
+			*.tbz2)    tar -jxvf $1   ;;
+			*.tgz)     tar -zxvf $1   ;;
+			*.zip)     unzip $1       ;;
+			*.ZIP)     unzip $1       ;;
+			*.rar)     unrar x $1     ;;
+			*.Z)       uncompress $1  ;;
+			*) echo "'$1' cannot be extracted/mounted via extract()" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
 }
 

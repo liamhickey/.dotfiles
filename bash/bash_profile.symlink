@@ -1,18 +1,8 @@
-# Many exerpts from Andrzej Szelachowski's ~/.bash_profile:
+# Some exerpts from Andrzej Szelachowski's ~/.bash_profile:
 
 #  Git Bash is started with --login, make sure we still load .bashrc.
 
 if [ -f ~/.bashrc ]; then . ~/.bashrc; fi
-
-#parse_git_branch() {
-#     git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1/"
-#}
-
-name_and_server() {
-  if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-    echo "`whoami`@`hostname -s` "
-  fi
-}
 
 #  If a colour is to be used in the PS1, it needs to be escaped first as a
 #  colour, then as a non-printing string.
@@ -29,37 +19,5 @@ BLU='\[\e[1;34m\]'
 MAG='\[\e[35m\]'
 NC='\[\e[m\]'
 
-#  For "literal" command substitution to be assigned to a variable,
-#  use escapes and double quotes:
-#        PCT="\` ... \`" . . .
-#  Otherwise, the value of PCT variable is assigned only once,
-#  when the variable is exported/read from .bash_profile,
-#  and it will not change afterwards even if the user ID changes.
-
-#  Escape a variables whose value changes:
-#        if [[ \$EUID -eq 0 ]],
-#  Otherwise the value of the EUID variable will be assigned only once,
-#  as above. 
-
-#  When a variable is assigned, it should be called escaped:
-#        echo \$T,
-#  Otherwise the value of the T variable is taken from the moment the PCT 
-#  variable is exported/read from .bash_profile.
-#  So, in this example it would be null.
-
-#  When a variable's value contains a semicolon it should be strong quoted:
-#        T='$RED',
-#  Otherwise, the semicolon will be interpreted as a command separator.
-
-#PS1="\`
-#if [[ \$EUID -eq 0 ]]; then PCT='$RED'; else PCT='$BLU'; fi;
-#if [[ -d .git ]]; then INFO=$MAG\$(parse_git_branch); else INFO='\!'; fi;
-#echo '\n$GRN[\w] $GRY('\$PCT'\t$GRY)-('\$PCT'$GRY)-('\$PCT''\$INFO'$GRY)\n$YEL->$NC '\`"
-
-#PS2="$YEL>>$NC "
-
-#  But most of the time I think the above is too much, so it is only included
-#  here for instructive purposes.
-
-PS1="\`echo '\t [$BLU\W$NC] $MAG$(name_and_server)$NC\$ '\`"
+PS1="\t [$BLU\W$NC] \$ "
 
